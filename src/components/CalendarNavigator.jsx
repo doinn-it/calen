@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import styled from 'styled-components';
@@ -27,17 +27,11 @@ const CalendarNavigatorStyled = styled.div`
   }
 `;
 
-class CalendarNavigator extends PureComponent {
-  constructor(props) {
-    super(props);
-    this.prev = this.prev.bind(this);
-    this.next = this.next.bind(this);
-  }
+const CalendarNavigator = (props) => {
+  const formatPeriodString = () => {
+    const { from, to } = props.period;
 
-  formatPeriodString() {
-    const { from, to } = this.props.period;
-
-    if (this.props.daysQuantity <= 1) {
+    if (props.daysQuantity <= 1) {
       return `${from.format(HUMAN_DATE_FORMAT)}`;
     }
 
@@ -50,56 +44,59 @@ class CalendarNavigator extends PureComponent {
     }
 
     return `${from.format('DD')} - ${to.format(HUMAN_DATE_FORMAT)}`;
-  }
+  };
 
-  prev() {
-    const to = moment(this.props.period.from).subtract(1, 'days');
-    const from = moment(to).subtract(this.props.daysQuantity - 1, 'days');
+  const prev = () => {
+    const to = moment(props.period.from).subtract(1, 'days');
+    const from = moment(to).subtract(props.daysQuantity - 1, 'days');
     const period = { from, to };
-    this.props.onPeriodChange(period);
+    props.onPeriodChange(period);
     return period;
-  }
+  };
 
-  next() {
-    const from = moment(this.props.period.to).add(1, 'days');
-    const to = moment(from).add(this.props.daysQuantity - 1, 'days');
+  const next = () => {
+    const from = moment(props.period.to).add(1, 'days');
+    const to = moment(from).add(props.daysQuantity - 1, 'days');
     const period = { from, to };
-    this.props.onPeriodChange(period);
+    props.onPeriodChange(period);
     return period;
-  }
+  };
 
-  render() {
-    return (
-      <CalendarNavigatorStyled>
-        <div className="calendar-navigator">
-          <span className="calendar-navigation__date-range">{this.formatPeriodString()}</span>
-          <button className="calendar-navigation__button previous" onClick={this.prev}>
-            <svg width="8px" height="10px" viewBox="0 0 50 80">
-              <polyline
-                fill="none"
-                strokeWidth="5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                points="45.63,75.8 0.375,38.087 45.63,0.375 "
-              />
-            </svg>
-          </button>
-          <button className="calendar-navigation__button next" onClick={this.next}>
-            <svg width="8px" height="10px" viewBox="0 0 50 80">
-              <polyline
-                fill="none"
-                strokeWidth="5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                points="0.375,0.375 45.63,38.087 0.375,75.8 "
-              />
-            </svg>
-          </button>
-        </div>
-      </CalendarNavigatorStyled>
-    );
-  }
-}
+  return (
+    <CalendarNavigatorStyled>
+      <div className="calendar-navigator">
+        <span className="calendar-navigation__date-range">
+          {formatPeriodString()}
+        </span>
+        <button
+          className="calendar-navigation__button previous"
+          onClick={prev}
+        >
+          <svg width="8px" height="10px" viewBox="0 0 50 80">
+            <polyline
+              fill="none"
+              strokeWidth="5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              points="45.63,75.8 0.375,38.087 45.63,0.375 "
+            />
+          </svg>
+        </button>
+        <button className="calendar-navigation__button next" onClick={next}>
+          <svg width="8px" height="10px" viewBox="0 0 50 80">
+            <polyline
+              fill="none"
+              strokeWidth="5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              points="0.375,0.375 45.63,38.087 0.375,75.8 "
+            />
+          </svg>
+        </button>
+      </div>
+    </CalendarNavigatorStyled>
+  );
+};
 
 CalendarNavigator.propTypes = {
   period: PropTypes.shape({
