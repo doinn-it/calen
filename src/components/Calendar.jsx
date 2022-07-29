@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import momentjs from 'moment';
@@ -66,7 +66,7 @@ const ButtonNewEvent = styled.button`
   left: 50%;
   z-index: 2;
   opacity: 0;
-  transition: all ease-in .22s;
+  transition: all ease-in 0.22s;
   cursor: pointer;
   outline: none;
 
@@ -91,10 +91,10 @@ const ButtonNewEvent = styled.button`
   }
 `;
 
-const Calendar = (props) => {
-  const buildCalendar = () => {
-    const { from, to } = props.period;
-    const { data } = props;
+class Calendar extends PureComponent {
+  buildCalendar() {
+    const { from, to } = this.props.period;
+    const { data } = this.props;
     const range = moment.range(from, to);
     const days = Array.from(range.by('day'));
     return days.map((day) => {
@@ -109,46 +109,48 @@ const Calendar = (props) => {
       }
       return obj;
     });
-  };
+  }
 
-  const calendar = buildCalendar();
-  const btnAddEvent = (date) => {
-    if (!props.onDayAddEventClick) {
-      return null;
-    }
+  render() {
+    const calendar = this.buildCalendar();
+    const btnAddEvent = (date) => {
+      if (!this.props.onDayAddEventClick) {
+        return null;
+      }
+      return (
+        <ButtonNewEvent
+          className="calen-list-item__new-event-button"
+          onClick={() => this.props.onDayAddEventClick(date)}
+        >
+          <svg className="icon icon--plus" viewBox="0 0 5 5">
+            <path d="M2 1 h1 v1 h1 v1 h-1 v1 h-1 v-1 h-1 v-1 h1 z" />
+          </svg>
+        </ButtonNewEvent>
+      );
+    };
+
     return (
-      <ButtonNewEvent
-        className="calen-list-item__new-event-button"
-        onClick={() => props.onDayAddEventClick(date)}
-      >
-        <svg className="icon icon--plus" viewBox="0 0 5 5">
-          <path d="M2 1 h1 v1 h1 v1 h-1 v1 h-1 v-1 h-1 v-1 h1 z" />
-        </svg>
-      </ButtonNewEvent>
-    );
-  };
-
-  return (
-    <CalendarStyled>
-      <ul className={`calen-list ${props.scrollEnabled ? 'scrollable' : ''}`}>
-        {calendar.map(day => (
-          <li
-            className={`calen-list-item ${day.isPast ? 'past' : ''}`}
-            key={day.date}
-          >
-            <button
-              className="calen-list-item__day"
-              onClick={() => props.onDayClick(day.date)}
+      <CalendarStyled>
+        <ul className={`calen-list ${this.props.scrollEnabled ? 'scrollable' : ''}`}>
+          {calendar.map(day => (
+            <li
+              className={`calen-list-item ${day.isPast ? 'past' : ''}`}
+              key={day.date}
             >
-              <Day {...day} active={props.day === day.date} />
-            </button>
-            {btnAddEvent(day.date)}
-          </li>
-        ))}
-      </ul>
-    </CalendarStyled>
-  );
-};
+              <button
+                className="calen-list-item__day"
+                onClick={() => this.props.onDayClick(day.date)}
+              >
+                <Day {...day} active={this.props.day === day.date} />
+              </button>
+              {btnAddEvent(day.date)}
+            </li>
+          ))}
+        </ul>
+      </CalendarStyled>
+    );
+  }
+}
 
 Calendar.propTypes = {
   period: PropTypes.shape({

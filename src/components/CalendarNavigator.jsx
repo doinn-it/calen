@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import styled from 'styled-components';
-import { HUMAN_DATE_FORMAT } from './constants';
+import { SHORT_DATE_FORMAT } from './constants';
 
 const CalendarNavigatorStyled = styled.div`
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -32,18 +32,18 @@ const CalendarNavigator = (props) => {
     const { from, to } = props.period;
 
     if (props.daysQuantity <= 1) {
-      return `${from.format(HUMAN_DATE_FORMAT)}`;
+      return `${from.format(SHORT_DATE_FORMAT)}`;
     }
 
     if (!from.isSame(to, 'year')) {
-      return `${from.format(HUMAN_DATE_FORMAT)} - ${to.format(HUMAN_DATE_FORMAT)}`;
+      return `${from.format(SHORT_DATE_FORMAT)} - ${to.format(SHORT_DATE_FORMAT)}`;
     }
 
     if (!from.isSame(to, 'month')) {
-      return `${from.format('DD MMM')} - ${to.format(HUMAN_DATE_FORMAT)}`;
+      return `${from.format('MMM')} - ${to.format(SHORT_DATE_FORMAT)}`;
     }
 
-    return `${from.format('DD')} - ${to.format(HUMAN_DATE_FORMAT)}`;
+    return `${to.format(SHORT_DATE_FORMAT)}`;
   };
 
   const prev = () => {
