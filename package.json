@@ -36,8 +36,8 @@
     "moment": "^2.19.2",
     "moment-range": "^3.0.3",
     "prop-types": "^15.6.0",
-    "react": "^16.1.1",
-    "react-dom": "^16.1.1",
+    "react": "17.0.0",
+    "react-dom": "17.0.0",
     "styled-components": "^2.2.3"
   }
 }

@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import momentjs from 'moment';
 import { extendMoment } from 'moment-range';
@@ -7,99 +7,84 @@ import Calendar from './Calendar';
 import CalendarNavigator from './CalendarNavigator';
 
 const moment = extendMoment(momentjs);
+const Calen = (props) => {
+  const [stateDaysQuantity, setStateDaysQuantity] = React.useState(props.daysQuantity || 7);
+  const [statePeriod, setStatePeriod] = React.useState(null);
+  const [stateDay, setStateDay] = React.useState(null);
+  const breakPoints = {
+    sm: window.matchMedia('(min-width: 576px)'),
+    md: window.matchMedia('(min-width: 768px)'),
+    lg: window.matchMedia('(min-width: 992px)'),
+    xl: window.matchMedia('(min-width: 1200px)'),
+  };
 
-class Calen extends PureComponent {
-  constructor(props) {
-    super(props);
-    this.state = {
-      daysQuantity: this.props.daysQuantity || 7,
-    };
-    this.setDaysQuantity = this.setDaysQuantity.bind(this);
-    this.resetDaysQuantityOnResize = this.resetDaysQuantityOnResize.bind(this);
-    this.handleDayClick = this.handleDayClick.bind(this);
-    this.handleDayAddEventClick = this.handleDayAddEventClick.bind(this);
-    this.handlePeriodChange = this.handlePeriodChange.bind(this);
-    this.breakPoints = {
-      sm: window.matchMedia('(min-width: 576px)'),
-      md: window.matchMedia('(min-width: 768px)'),
-      lg: window.matchMedia('(min-width: 992px)'),
-      xl: window.matchMedia('(min-width: 1200px)'),
-    };
-  }
-
-  componentDidMount() {
-    try {
-      require(`moment/locale/${this.props.locale}`);
-    } catch (e) {
-      if (this.props.locale !== 'en') {
-        console.log(new Error('Locale not found'));
-      }
+  const setActiveDay = (day) => {
+    setStateDay(day);
+    const { onDayChange } = props;
+    if (onDayChange) {
+      onDayChange(day);
     }
-    this.setUpDaysQuantity();
-  }
+  };
 
-  componentWillUnmount() {
-    this.removeBreakPointsEvents();
-  }
+  const handlePeriodChange = (period) => {
+    const day = moment(props.date);
+    const today = moment();
+    const range = moment.range(period.from, period.to);
+    let date = period.from.format(DEFAULT_DATE_FORMAT);
+    if (range.contains(today)) {
+      date = today.format(DEFAULT_DATE_FORMAT);
+    }
 
-  setPeriod(quantity) {
-    const { date } = this.props;
+    setStatePeriod(period);
+    const { onPeriodChange } = props;
+    if (onPeriodChange) {
+      onPeriodChange(period);
+    }
+
+    if (range.contains(moment(day))) {
+      date = moment(day).format(DEFAULT_DATE_FORMAT);
+    }
+    setActiveDay(date);
+  };
+
+  const setPeriod = (quantity) => {
+    const { date } = props;
     const period = {
       from: moment().startOf('isoWeek'),
       to: moment().startOf('isoWeek').add(quantity, 'days'),
     };
-    if (this.state.period) {
-      const { from } = this.state.period;
+    if (statePeriod) {
+      const { from } = statePeriod;
       period.from = from.startOf('isoWeek');
       period.to = from.clone().startOf('isoWeek').add(quantity, 'days');
     } else if (date) {
       period.from = moment(date).startOf('isoWeek');
       period.to = moment(date).startOf('isoWeek').add(quantity, 'days');
     }
-    this.setState({ period });
-    this.handlePeriodChange(period);
-  }
+    setStatePeriod(period);
+    handlePeriodChange(period);
+  };
 
-  setUpDaysQuantity() {
-    const quantity = this.props.daysQuantity;
-    if (!quantity) {
-      this.resetDaysQuantityOnResize();
-    } else {
-      this.setDaysQuantity(quantity);
-    }
-  }
-
-  setDaysQuantity(quantity) {
-    this.setState({ daysQuantity: quantity });
-    const { onDaysQuantityChange } = this.props;
+  const setDaysQuantity = (quantity) => {
+    setStateDaysQuantity(quantity);
+    const { onDaysQuantityChange } = props;
     if (onDaysQuantityChange) {
       onDaysQuantityChange(quantity);
     }
-    this.setPeriod(quantity - 1);
-  }
+    setPeriod(quantity - 1);
+  };
 
-  setActiveDay(day) {
-    this.setState({ day });
-    const { onDayChange } = this.props;
-    if (onDayChange) {
-      onDayChange(day);
-    }
-  }
-
-  resetDaysQuantityOnResize() {
+  const resetDaysQuantityOnResize = () => {
     const {
-      xl,
-      lg,
-      md,
-      sm,
-    } = this.breakPoints;
+      xl, lg, md, sm,
+    } = breakPoints;
 
-    xl.addListener(this.resetDaysQuantityOnResize);
-    lg.addListener(this.resetDaysQuantityOnResize);
-    md.addListener(this.resetDaysQuantityOnResize);
-    sm.addListener(this.resetDaysQuantityOnResize);
+    xl.addListener(resetDaysQuantityOnResize);
+    lg.addListener(resetDaysQuantityOnResize);
+    md.addListener(resetDaysQuantityOnResize);
+    sm.addListener(resetDaysQuantityOnResize);
 
-    let quantity = this.state.daysQuantity;
+    let quantity = stateDaysQuantity;
     if (xl.matches) {
       quantity = 7;
     } else if (lg.matches) {
@@ -111,73 +96,77 @@ class Calen extends PureComponent {
     } else {
       quantity = 1;
     }
-    this.setDaysQuantity(quantity);
-  }
+    setDaysQuantity(props.scrollEnabled ? props.daysQuantity : quantity);
+  };
 
-  removeBreakPointsEvents() {
-    this.breakPoints.xl.removeListener(this.resetDaysQuantityOnResize);
-    this.breakPoints.lg.removeListener(this.resetDaysQuantityOnResize);
-    this.breakPoints.md.removeListener(this.resetDaysQuantityOnResize);
-    this.breakPoints.sm.removeListener(this.resetDaysQuantityOnResize);
-  }
-
-  handleDayAddEventClick(day) {
-    this.props.onDayAddEventClick(day);
-  }
-
-  handleDayClick(day) {
-    this.setActiveDay(day);
-  }
-
-  handlePeriodChange(period) {
-    const day = moment(this.props.date);
-    const today = moment();
-    const range = moment.range(period.from, period.to);
-    let date = period.from.format(DEFAULT_DATE_FORMAT);
-    if (range.contains(today)) {
-      date = today.format(DEFAULT_DATE_FORMAT);
+  const setUpDaysQuantity = () => {
+    const quantity = props.daysQuantity;
+    if (!quantity) {
+      resetDaysQuantityOnResize();
+    } else {
+      setDaysQuantity(quantity);
     }
+  };
 
-    this.setState({ period });
-    const { onPeriodChange } = this.props;
-    if (onPeriodChange) {
-      onPeriodChange(period);
-    }
+  const removeBreakPointsEvents = () => {
+    breakPoints.xl.removeListener(resetDaysQuantityOnResize);
+    breakPoints.lg.removeListener(resetDaysQuantityOnResize);
+    breakPoints.md.removeListener(resetDaysQuantityOnResize);
+    breakPoints.sm.removeListener(resetDaysQuantityOnResize);
+  };
 
-    if (range.contains(moment(day))) {
-      date = moment(day).format(DEFAULT_DATE_FORMAT);
+  React.useEffect(() => {
+    try {
+      require(`moment/locale/${props.locale}`);
+    } catch (e) {
+      if (props.locale !== 'en') {
+        console.log(new Error('Locale not found'));
+      }
     }
-    this.setActiveDay(date);
+    setUpDaysQuantity();
+
+    return removeBreakPointsEvents();
+  }, []);
+
+  const handleDayAddEventClick = (day) => {
+    props.onDayAddEventClick(day);
+  };
+
+  const handleDayClick = (day) => {
+    setActiveDay(day);
+  };
+
+  if (!statePeriod) {
+    return null;
   }
 
-  render() {
-    if (!this.state.period) {
-      return null;
-    }
-    return (
-      <div>
-        <CalendarNavigator
-          period={this.state.period}
-          daysQuantity={this.state.daysQuantity}
-          onPeriodChange={this.handlePeriodChange}
-        />
-        <Calendar
-          period={this.state.period}
-          day={this.state.day}
-          data={this.props.data}
-          onDayClick={this.handleDayClick}
-          onDayAddEventClick={this.props.onDayAddEventClick ? this.handleDayAddEventClick : null}
-        />
-      </div>
-    );
-  }
-}
+  return (
+    <div>
+      <CalendarNavigator
+        period={statePeriod}
+        daysQuantity={stateDaysQuantity}
+        onPeriodChange={handlePeriodChange}
+      />
+      <Calendar
+        period={statePeriod}
+        day={stateDay}
+        data={props.data}
+        scrollEnabled={props.scrollEnabled}
+        onDayClick={handleDayClick}
+        onDayAddEventClick={
+            props.onDayAddEventClick ? handleDayAddEventClick : null
+          }
+      />
+    </div>
+  );
+};
 
 Calen.defaultProps = {
   date: moment(),
   locale: null,
   data: {},
   daysQuantity: 0,
+  scrollEnabled: false,
   onDayChange: null,
   onDayAddEventClick: null,
   onPeriodChange: null,
@@ -193,6 +182,7 @@ Calen.propTypes = {
   ]),
   data: PropTypes.object,
   daysQuantity: PropTypes.number,
+  scrollEnabled: PropTypes.bool,
   onDayChange: PropTypes.func,
   onDayAddEventClick: PropTypes.func,
   onPeriodChange: PropTypes.func,

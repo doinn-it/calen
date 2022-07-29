@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import momentjs from 'moment';
@@ -11,24 +11,27 @@ const CalendarStyled = styled.div`
   ul.calen-list {
     display: flex;
     flex-wrap: wrap;
-    list-style:none;
+    list-style: none;
     margin: 0;
     min-height: 180px;
     padding: 10px 0 0 0;
     width: 100%;
-
+  }
+  .scrollable {
+    flex-wrap: nowrap !important;
+    overflow-x: scroll !important;
   }
   .calen-list-item {
     flex: 1;
-    display:flex;
+    display: flex;
     margin: 4px;
     position: relative;
-    width:100%;
+    width: 100%;
     :first-child {
       margin-left: 0;
     }
     :last-child {
-        margin-right: 0;
+      margin-right: 0;
     }
     &__day {
       background: transparent;
@@ -41,7 +44,7 @@ const CalendarStyled = styled.div`
       .calen-list-item__new-event-button {
         opacity: 1;
         bottom: 30px;
-        transition: all ease-in .22s;
+        transition: all ease-in 0.22s;
       }
     }
   }
@@ -88,10 +91,10 @@ const ButtonNewEvent = styled.button`
   }
 `;
 
-class Calendar extends PureComponent {
-  buildCalendar() {
-    const { from, to } = this.props.period;
-    const { data } = this.props;
+const Calendar = (props) => {
+  const buildCalendar = () => {
+    const { from, to } = props.period;
+    const { data } = props;
     const range = moment.range(from, to);
     const days = Array.from(range.by('day'));
     return days.map((day) => {
@@ -106,45 +109,46 @@ class Calendar extends PureComponent {
       }
       return obj;
     });
-  }
+  };
 
-  render() {
-    const calendar = this.buildCalendar();
-    const btnAddEvent = (date) => {
-      if (!this.props.onDayAddEventClick) {
-        return null;
-      }
-      return (
-        <ButtonNewEvent
-          className="calen-list-item__new-event-button"
-          onClick={() => this.props.onDayAddEventClick(date)}
-        >
-          <svg className="icon icon--plus" viewBox="0 0 5 5">
-            <path d="M2 1 h1 v1 h1 v1 h-1 v1 h-1 v-1 h-1 v-1 h1 z" />
-          </svg>
-        </ButtonNewEvent>
-      );
-    };
-
+  const calendar = buildCalendar();
+  const btnAddEvent = (date) => {
+    if (!props.onDayAddEventClick) {
+      return null;
+    }
     return (
-      <CalendarStyled>
-        <ul className="calen-list">
-          {calendar.map(day => (
-            <li className={`calen-list-item ${(day.isPast) ? 'past' : ''}`} key={day.date}>
-              <button
-                className="calen-list-item__day"
-                onClick={() => this.props.onDayClick(day.date)}
-              >
-                <Day {...day} active={this.props.day === day.date} />
-              </button>
-              { btnAddEvent(day.date) }
-            </li>
-          ))}
-        </ul>
-      </CalendarStyled>
+      <ButtonNewEvent
+        className="calen-list-item__new-event-button"
+        onClick={() => props.onDayAddEventClick(date)}
+      >
+        <svg className="icon icon--plus" viewBox="0 0 5 5">
+          <path d="M2 1 h1 v1 h1 v1 h-1 v1 h-1 v-1 h-1 v-1 h1 z" />
+        </svg>
+      </ButtonNewEvent>
     );
-  }
-}
+  };
+
+  return (
+    <CalendarStyled>
+      <ul className={`calen-list ${props.scrollEnabled ? 'scrollable' : ''}`}>
+        {calendar.map(day => (
+          <li
+            className={`calen-list-item ${day.isPast ? 'past' : ''}`}
+            key={day.date}
+          >
+            <button
+              className="calen-list-item__day"
+              onClick={() => props.onDayClick(day.date)}
+            >
+              <Day {...day} active={props.day === day.date} />
+            </button>
+            {btnAddEvent(day.date)}
+          </li>
+        ))}
+      </ul>
+    </CalendarStyled>
+  );
+};
 
 Calendar.propTypes = {
   period: PropTypes.shape({
@@ -159,6 +163,7 @@ Calendar.propTypes = {
   }).isRequired,
   day: PropTypes.string.isRequired,
   data: PropTypes.object.isRequired,
+  scrollEnabled: PropTypes.bool.isRequired,
   onDayClick: PropTypes.func.isRequired,
   onDayAddEventClick: PropTypes.func,
 };
