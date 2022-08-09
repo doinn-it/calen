@@ -130,7 +130,7 @@ class Calendar extends PureComponent {
     };
 
     return (
-      <CalendarStyled>
+      <CalendarStyled className="calen-list__wrapper">
         <ul
           className={`calen-list ${
             this.props.scrollEnabled ? 'scrollable' : ''

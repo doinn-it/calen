@@ -152,7 +152,7 @@ class Calen extends PureComponent {
       return null;
     }
     return (
-      <div>
+      <div className="calen">
         <CalendarNavigator
           period={this.state.period}
           daysQuantity={this.state.daysQuantity}
