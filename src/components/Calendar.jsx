@@ -131,7 +131,11 @@ class Calendar extends PureComponent {
 
     return (
       <CalendarStyled>
-        <ul className={`calen-list ${this.props.scrollEnabled ? 'scrollable' : ''}`}>
+        <ul
+          className={`calen-list ${
+            this.props.scrollEnabled ? 'scrollable' : ''
+          }`}
+        >
           {calendar.map(day => (
             <li
               className={`calen-list-item ${day.isPast ? 'past' : ''}`}
@@ -141,7 +145,11 @@ class Calendar extends PureComponent {
                 className="calen-list-item__day"
                 onClick={() => this.props.onDayClick(day.date)}
               >
-                <Day {...day} active={this.props.day === day.date} />
+                <Day
+                  {...day}
+                  active={this.props.day === day.date}
+                  {...this.props.dayProps}
+                />
               </button>
               {btnAddEvent(day.date)}
             </li>
@@ -166,6 +174,9 @@ Calendar.propTypes = {
   day: PropTypes.string.isRequired,
   data: PropTypes.object.isRequired,
   scrollEnabled: PropTypes.bool.isRequired,
+  dayProps: PropTypes.shape({
+    variant: PropTypes.string,
+  }).isRequired,
   onDayClick: PropTypes.func.isRequired,
   onDayAddEventClick: PropTypes.func,
 };

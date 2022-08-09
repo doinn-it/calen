@@ -46,6 +46,22 @@ const CalendarNavigator = (props) => {
     return `${to.format(SHORT_DATE_FORMAT)}`;
   };
 
+  const formatTitle = () => {
+    const periodString = formatPeriodString();
+    let prefix = '';
+    let suffix = '';
+
+    if (props.prefix) {
+      prefix = `${props.prefix} `;
+    }
+
+    if (props.suffix) {
+      suffix = ` ${props.suffix}`;
+    }
+
+    return prefix + periodString + suffix;
+  };
+
   const prev = () => {
     const to = moment(props.period.from).subtract(1, 'days');
     const from = moment(to).subtract(props.daysQuantity - 1, 'days');
@@ -63,15 +79,10 @@ const CalendarNavigator = (props) => {
   };
 
   return (
-    <CalendarNavigatorStyled>
+    <CalendarNavigatorStyled className="calendar-navigator__wrapper">
       <div className="calendar-navigator">
-        <span className="calendar-navigation__date-range">
-          {formatPeriodString()}
-        </span>
-        <button
-          className="calendar-navigation__button previous"
-          onClick={prev}
-        >
+        <span className="calendar-navigation__date-range">{formatTitle()}</span>
+        <button className="calendar-navigation__button previous" onClick={prev}>
           <svg width="8px" height="10px" viewBox="0 0 50 80">
             <polyline
               fill="none"
@@ -98,6 +109,11 @@ const CalendarNavigator = (props) => {
   );
 };
 
+CalendarNavigator.defaultProps = {
+  prefix: null,
+  suffix: null,
+};
+
 CalendarNavigator.propTypes = {
   period: PropTypes.shape({
     from: PropTypes.oneOfType([
@@ -111,6 +127,8 @@ CalendarNavigator.propTypes = {
   }).isRequired,
   daysQuantity: PropTypes.number.isRequired,
   onPeriodChange: PropTypes.func.isRequired,
+  prefix: PropTypes.string,
+  suffix: PropTypes.string,
 };
 
 export default CalendarNavigator;

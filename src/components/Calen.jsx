@@ -157,12 +157,14 @@ class Calen extends PureComponent {
           period={this.state.period}
           daysQuantity={this.state.daysQuantity}
           onPeriodChange={this.handlePeriodChange}
+          {...this.props.navigatorProps}
         />
         <Calendar
           period={this.state.period}
           day={this.state.day}
           data={this.props.data}
           scrollEnabled={this.props.scrollEnabled}
+          dayProps={this.props.dayProps}
           onDayClick={this.handleDayClick}
           onDayAddEventClick={
             this.props.onDayAddEventClick ? this.handleDayAddEventClick : null
@@ -179,6 +181,13 @@ Calen.defaultProps = {
   data: {},
   daysQuantity: 0,
   scrollEnabled: false,
+  dayProps: {
+    variant: 'default',
+  },
+  navigatorProps: {
+    prefix: null,
+    suffix: null,
+  },
   onDayChange: null,
   onDayAddEventClick: null,
   onPeriodChange: null,
@@ -195,6 +204,13 @@ Calen.propTypes = {
   data: PropTypes.object,
   daysQuantity: PropTypes.number,
   scrollEnabled: PropTypes.bool,
+  dayProps: PropTypes.shape({
+    variant: PropTypes.oneOf(['default', 'day']),
+  }),
+  navigatorProps: PropTypes.shape({
+    prefix: PropTypes.string,
+    suffix: PropTypes.string,
+  }),
   onDayChange: PropTypes.func,
   onDayAddEventClick: PropTypes.func,
   onPeriodChange: PropTypes.func,

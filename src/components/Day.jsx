@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components';
 import moment from 'moment';
 
 const DayStyled = styled.div`
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   background: #fff;
   border: 1px solid #585858;
   color: #585858;
@@ -23,7 +23,7 @@ const DayStyled = styled.div`
     }
   }
   .day-header::after {
-    content: '';
+    content: "";
     clear: both;
     display: block;
   }
@@ -32,7 +32,6 @@ const DayStyled = styled.div`
     min-height: 70px;
     text-align: left;
     width: 100%;
-
   }
   .day-event-list {
     display: block;
@@ -42,21 +41,28 @@ const DayStyled = styled.div`
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  ${props => props.today && css`
-    border-bottom: 1px solid tomato;
-  `}
-  ${props => props.active && css`
-    padding-top: 20px;
-    padding-bottom: 20px;
-    background: #585858;
-    color: #fff;
-  `}
+  ${props =>
+    props.today &&
+    css`
+      border-bottom: 1px solid tomato;
+    `}
+  ${props =>
+    props.active &&
+    css`
+      padding-top: 20px;
+      padding-bottom: 20px;
+      background: #585858;
+      color: #fff;
+    `}
 `;
 
-const Day = ({ date, events, active }) => {
+const Day = ({
+  date, events, active, variant,
+}) => {
   const isToday = moment(date).isSame(new Date(), 'd');
   let dayClass = 'day';
-  let formatWeekDay = moment(date).format('dddd');
+  const weekFormat = variant === 'default' ? 'dddd' : 'ddd';
+  let formatWeekDay = moment(date).format(weekFormat);
   if (active) {
     dayClass += ' active';
   }
@@ -65,31 +71,66 @@ const Day = ({ date, events, active }) => {
     formatWeekDay = moment().calendar(null).split(' ');
     formatWeekDay = formatWeekDay[0];
   }
-  return (
-    <DayStyled className={dayClass} today={isToday} dayClass active={active}>
+
+  const defaultVariant = () => (
+    <React.Fragment>
       <div className="day-header">
-        <div className="day-date">
-          {moment(date).format('MMM DD')}
-        </div>
-        <div className="day-week-name">
-          {formatWeekDay}
-        </div>
+        <div className="day-date">{moment(date).format('MMM DD')}</div>
+        <div className="day-week-name">{formatWeekDay}</div>
       </div>
       <div className="day-event">
-        {events.map(event => <div className="day-event-list" key={event.id}>{event.name}</div>)}
+        {events.map(event => (
+          <div className="day-event-list" key={event.id}>
+            {event.name}
+          </div>
+        ))}
       </div>
+    </React.Fragment>
+  );
+
+  const dayVariant = () => (
+    <React.Fragment>
+      <div className="day-header">
+        <div className="day-week-name">{formatWeekDay}</div>
+        <div className="day-date">{moment(date).format('DD')}</div>
+        <div className="day-event">
+          {events.map(event => (
+            <div className="day-event-list" key={event.id}>
+              {event.name}
+            </div>
+          ))}
+        </div>
+      </div>
+    </React.Fragment>
+  );
+
+  const byVariant = () => {
+    switch (variant) {
+      case 'day':
+        return dayVariant();
+
+      default:
+        return defaultVariant();
+    }
+  };
+
+  return (
+    <DayStyled className={dayClass} today={isToday} dayClass active={active}>
+      {byVariant()}
     </DayStyled>
   );
 };
 
 Day.defaultProps = {
   active: false,
+  variant: 'default',
 };
 
 Day.propTypes = {
   date: PropTypes.string.isRequired,
   events: PropTypes.array.isRequired,
   active: PropTypes.bool,
+  variant: PropTypes.oneOf(['default', 'day']),
 };
 
 export default Day;
