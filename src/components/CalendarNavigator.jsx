@@ -22,7 +22,7 @@ const CalendarNavigatorStyled = styled.div`
     border-color: #000;
     background: #fcfcfc;
   }
-  .calendar-navigation__date-range {
+  .calendar-navigation__date-range__period {
     text-transform: capitalize
   }
 `;
@@ -59,7 +59,17 @@ const CalendarNavigator = (props) => {
       suffix = ` ${props.suffix}`;
     }
 
-    return prefix + periodString + suffix;
+    return (
+      <React.Fragment>
+        <span className="calendar-navigation__date-range__prefix">
+          {prefix}
+        </span>
+        <span className="calendar-navigation__date-range__period">
+          {periodString}
+        </span>
+        <span className="calendar-navigation__date-range__suffix">{suffix}</span>
+      </React.Fragment>
+    );
   };
 
   const prev = () => {
