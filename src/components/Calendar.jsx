@@ -9,6 +9,7 @@ import Day from './Day';
 const moment = extendMoment(momentjs);
 const CalendarStyled = styled.div`
   ul.calen-list {
+    -webkit-tap-highlight-color: transparent;
     display: flex;
     flex-wrap: wrap;
     list-style: none;
