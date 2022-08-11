@@ -90,7 +90,7 @@ const Day = ({
       return <div className="day-event-list-minimalist" />;
     }
     return events.map(event => (
-      <div className="day-event-list" key={event.id}>
+      <div className="day-event-list" key={event.id} id={event.id}>
         {event.name}
       </div>
     ));
@@ -104,7 +104,7 @@ const Day = ({
       </div>
       <div className="day-event">
         {events.map(event => (
-          <div className="day-event-list" key={event.id}>
+          <div className="day-event-list" key={event.id} id={event.id}>
             {event.name}
           </div>
         ))}
