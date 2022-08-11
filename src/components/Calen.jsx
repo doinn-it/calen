@@ -25,6 +25,9 @@ class Calen extends PureComponent {
       lg: window.matchMedia('(min-width: 992px)'),
       xl: window.matchMedia('(min-width: 1200px)'),
     };
+
+    this.myRef = React.createRef();
+    this.scrollToActiveDay = this.scrollToActiveDay.bind(this);
   }
 
   componentDidMount() {
@@ -147,6 +150,15 @@ class Calen extends PureComponent {
     this.setActiveDay(date);
   }
 
+  scrollToActiveDay() {
+    if (this.props.scrollEnabled) {
+      this.myRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }
+  }
+
   render() {
     if (!this.state.period) {
       return null;
@@ -164,6 +176,8 @@ class Calen extends PureComponent {
           day={this.state.day}
           data={this.props.data}
           scrollEnabled={this.props.scrollEnabled}
+          activeDayRef={this.myRef}
+          scrollToActiveDay={this.scrollToActiveDay}
           dayProps={this.props.dayProps}
           onDayClick={this.handleDayClick}
           onDayAddEventClick={

@@ -92,6 +92,14 @@ const ButtonNewEvent = styled.button`
 `;
 
 class Calendar extends PureComponent {
+  componentDidMount() {
+    this.props.scrollToActiveDay();
+  }
+
+  componentDidUpdate() {
+    this.props.scrollToActiveDay();
+  }
+
   buildCalendar() {
     const { from, to } = this.props.period;
     const { data } = this.props;
@@ -140,6 +148,7 @@ class Calendar extends PureComponent {
             <li
               className={`calen-list-item ${day.isPast ? 'past' : ''}`}
               key={day.date}
+              ref={this.props.day === day.date ? this.props.activeDayRef : null}
             >
               <button
                 className="calen-list-item__day"
@@ -176,9 +185,12 @@ Calendar.propTypes = {
   scrollEnabled: PropTypes.bool.isRequired,
   dayProps: PropTypes.shape({
     variant: PropTypes.string,
+    activeDayRef: PropTypes.any,
   }).isRequired,
   onDayClick: PropTypes.func.isRequired,
   onDayAddEventClick: PropTypes.func,
+  scrollToActiveDay: PropTypes.func,
+  activeDayRef: PropTypes.object,
 };
 
 export default Calendar;
