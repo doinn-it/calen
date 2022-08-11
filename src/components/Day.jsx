@@ -41,7 +41,7 @@ const DayStyled = styled.div`
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  .day-event-list-past {
+  .day-event-list-minimalist {
     width: 8px;
     height: 8px;
     border-radius: 50%;
@@ -59,14 +59,14 @@ const DayStyled = styled.div`
       padding-bottom: 20px;
       background: #585858;
       color: #fff;
-      .day-event-list-past {
+      .day-event-list-minimalist {
         background-color: #fff;
       }
     `}
 `;
 
 const Day = ({
-  date, events, active, variant, isPast,
+  date, events, active, variant, isPast, eventMinimalist,
 }) => {
   const isToday = moment(date).isSame(new Date(), 'd');
   let dayClass = 'day';
@@ -86,8 +86,8 @@ const Day = ({
       return null;
     }
 
-    if (isPast) {
-      return <div className="day-event-list-past" />;
+    if (isPast || eventMinimalist) {
+      return <div className="day-event-list-minimalist" />;
     }
     return events.map(event => (
       <div className="day-event-list" key={event.id}>
@@ -143,6 +143,7 @@ Day.defaultProps = {
   active: false,
   variant: 'default',
   isPast: false,
+  eventMinimalist: false,
 };
 
 Day.propTypes = {
@@ -151,6 +152,7 @@ Day.propTypes = {
   active: PropTypes.bool,
   variant: PropTypes.oneOf(['default', 'day']),
   isPast: PropTypes.bool,
+  eventMinimalist: PropTypes.bool,
 };
 
 export default Day;
