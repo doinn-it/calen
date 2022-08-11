@@ -41,6 +41,12 @@ const DayStyled = styled.div`
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+  .day-event-list-past {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #585858;
+  }
   ${props =>
     props.today &&
     css`
@@ -53,11 +59,14 @@ const DayStyled = styled.div`
       padding-bottom: 20px;
       background: #585858;
       color: #fff;
+      .day-event-list-past {
+        background-color: #fff;
+      }
     `}
 `;
 
 const Day = ({
-  date, events, active, variant,
+  date, events, active, variant, isPast,
 }) => {
   const isToday = moment(date).isSame(new Date(), 'd');
   let dayClass = 'day';
@@ -71,6 +80,21 @@ const Day = ({
     formatWeekDay = moment().calendar(null).split(' ');
     formatWeekDay = formatWeekDay[0];
   }
+
+  const getEvents = () => {
+    if (events.length === 0) {
+      return null;
+    }
+
+    if (isPast) {
+      return <div className="day-event-list-past" />;
+    }
+    return events.map(event => (
+      <div className="day-event-list" key={event.id}>
+        {event.name}
+      </div>
+    ));
+  };
 
   const defaultVariant = () => (
     <React.Fragment>
@@ -93,13 +117,7 @@ const Day = ({
       <div className="day-header">
         <div className="day-week-name">{formatWeekDay}</div>
         <div className="day-date">{moment(date).format('DD')}</div>
-        <div className="day-event">
-          {events.map(event => (
-            <div className="day-event-list" key={event.id}>
-              {event.name}
-            </div>
-          ))}
-        </div>
+        <div className="day-event">{getEvents()}</div>
       </div>
     </React.Fragment>
   );
@@ -124,6 +142,7 @@ const Day = ({
 Day.defaultProps = {
   active: false,
   variant: 'default',
+  isPast: false,
 };
 
 Day.propTypes = {
@@ -131,6 +150,7 @@ Day.propTypes = {
   events: PropTypes.array.isRequired,
   active: PropTypes.bool,
   variant: PropTypes.oneOf(['default', 'day']),
+  isPast: PropTypes.bool,
 };
 
 export default Day;
