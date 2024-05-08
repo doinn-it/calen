@@ -74,6 +74,7 @@ const Day = ({
   eventMinimalist,
   weekdayFormat,
   dateFormat,
+  showTodayLabel,
 }) => {
   const isToday = moment(date).isSame(new Date(), 'd');
   let dayClass = 'day';
@@ -82,7 +83,7 @@ const Day = ({
   if (active) {
     dayClass += ' active';
   }
-  if (isToday) {
+  if (isToday && showTodayLabel) {
     dayClass += ' today';
     formatWeekDay = moment().calendar(null).split(' ');
     formatWeekDay = formatWeekDay[0];
@@ -153,6 +154,7 @@ Day.defaultProps = {
   eventMinimalist: false,
   weekdayFormat: 'dddd',
   dateFormat: 'MMM DD',
+  showTodayLabel: true,
 };
 
 Day.propTypes = {
@@ -164,6 +166,7 @@ Day.propTypes = {
   eventMinimalist: PropTypes.bool,
   weekdayFormat: PropTypes.string,
   dateFormat: PropTypes.string,
+  showTodayLabel: PropTypes.bool,
 };
 
 export default Day;

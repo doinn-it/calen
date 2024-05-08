@@ -25,6 +25,7 @@ class Calen extends PureComponent {
       lg: window.matchMedia('(min-width: 992px)'),
       xl: window.matchMedia('(min-width: 1200px)'),
     };
+    this.handleTodayShortcutClick = this.handleTodayShortcutClick.bind(this);
   }
 
   componentDidMount() {
@@ -126,6 +127,20 @@ class Calen extends PureComponent {
     this.setActiveDay(day);
   }
 
+  handleTodayShortcutClick() {
+    const today = moment();
+    const period = {
+      from: moment().startOf('isoWeek'),
+      to: moment()
+        .startOf('isoWeek')
+        .add(this.state.daysQuantity - 1, 'days'),
+    };
+
+    this.setActiveDay(today.format(DEFAULT_DATE_FORMAT));
+    this.setState({ period });
+    this.handlePeriodChange(period);
+  }
+
   handlePeriodChange(period) {
     const day = moment(this.props.date);
     const today = moment();
@@ -157,6 +172,7 @@ class Calen extends PureComponent {
           period={this.state.period}
           daysQuantity={this.state.daysQuantity}
           onPeriodChange={this.handlePeriodChange}
+          onTodayShortcutClick={this.handleTodayShortcutClick}
           {...this.props.navigatorProps}
         />
         <Calendar

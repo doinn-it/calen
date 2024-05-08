@@ -72,6 +72,22 @@ const CalendarNavigator = (props) => {
     );
   };
 
+  const renderTodayButton = () => {
+    const todayLabel = props.todayShortButtonLabel
+      ? props.todayShortButtonLabel
+      : moment().calendar(null).split(' ')[0];
+
+    return (
+      <button
+        className="calendar-navigation__button today"
+        disabled={props.isTodayDisabled}
+        onClick={props.onTodayShortcutClick}
+      >
+        {todayLabel}
+      </button>
+    );
+  };
+
   const prev = () => {
     const to = moment(props.period.from).subtract(1, 'days');
     const from = moment(to).subtract(props.daysQuantity - 1, 'days');
@@ -91,8 +107,13 @@ const CalendarNavigator = (props) => {
   return (
     <CalendarNavigatorStyled className="calendar-navigator__wrapper">
       <div className="calendar-navigator">
+        {props.enableTodayShortButton && renderTodayButton(props.period, props.onPeriodChange)}
         <span className="calendar-navigation__date-range">{formatTitle()}</span>
-        <button className="calendar-navigation__button previous" onClick={prev}>
+        <button
+          className="calendar-navigation__button previous"
+          disabled={props.isPreviousDisabled}
+          onClick={prev}
+        >
           <svg width="8px" height="10px" viewBox="0 0 50 80">
             <polyline
               fill="none"
@@ -103,7 +124,11 @@ const CalendarNavigator = (props) => {
             />
           </svg>
         </button>
-        <button className="calendar-navigation__button next" onClick={next}>
+        <button
+          className="calendar-navigation__button next"
+          disabled={props.isNextDisabled}
+          onClick={next}
+        >
           <svg width="8px" height="10px" viewBox="0 0 50 80">
             <polyline
               fill="none"
@@ -122,6 +147,12 @@ const CalendarNavigator = (props) => {
 CalendarNavigator.defaultProps = {
   prefix: null,
   suffix: null,
+  isPreviousDisabled: false,
+  isNextDisabled: false,
+  isTodayDisabled: false,
+  enableTodayShortButton: false,
+  todayShortButtonLabel: null,
+  onTodayShortcutClick: () => {},
 };
 
 CalendarNavigator.propTypes = {
@@ -139,6 +170,12 @@ CalendarNavigator.propTypes = {
   onPeriodChange: PropTypes.func.isRequired,
   prefix: PropTypes.string,
   suffix: PropTypes.string,
+  isPreviousDisabled: PropTypes.bool,
+  isNextDisabled: PropTypes.bool,
+  isTodayDisabled: PropTypes.bool,
+  enableTodayShortButton: PropTypes.bool,
+  todayShortButtonLabel: PropTypes.string,
+  onTodayShortcutClick: PropTypes.func,
 };
 
 export default CalendarNavigator;

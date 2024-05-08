@@ -17,8 +17,11 @@ const data = {
 
 ReactDOM.render(
   <Calen
+    navigatorProps={{
+      enableTodayShortButton: true,
+    }}
     locale="pt"
-    date="2018-01-10"
+    date="2024-05-08"
     data={data}
     onDayChange={date => console.log(date)}
     onDayAddEventClick={date => console.log(date, 'add event')}
