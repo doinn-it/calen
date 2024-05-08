@@ -66,11 +66,18 @@ const DayStyled = styled.div`
 `;
 
 const Day = ({
-  date, events, active, variant, isPast, eventMinimalist,
+  date,
+  events,
+  active,
+  variant,
+  isPast,
+  eventMinimalist,
+  weekdayFormat,
+  dateFormat,
 }) => {
   const isToday = moment(date).isSame(new Date(), 'd');
   let dayClass = 'day';
-  const weekFormat = variant === 'default' ? 'dddd' : 'ddd';
+  const weekFormat = variant === 'default' ? weekdayFormat : 'ddd';
   let formatWeekDay = moment(date).format(weekFormat);
   if (active) {
     dayClass += ' active';
@@ -99,7 +106,7 @@ const Day = ({
   const defaultVariant = () => (
     <React.Fragment>
       <div className="day-header">
-        <div className="day-date">{moment(date).format('MMM DD')}</div>
+        <div className="day-date">{moment(date).format(dateFormat)}</div>
         <div className="day-week-name">{formatWeekDay}</div>
       </div>
       <div className="day-event">
@@ -144,6 +151,8 @@ Day.defaultProps = {
   variant: 'default',
   isPast: false,
   eventMinimalist: false,
+  weekdayFormat: 'dddd',
+  dateFormat: 'MMM DD',
 };
 
 Day.propTypes = {
@@ -153,6 +162,8 @@ Day.propTypes = {
   variant: PropTypes.oneOf(['default', 'day']),
   isPast: PropTypes.bool,
   eventMinimalist: PropTypes.bool,
+  weekdayFormat: PropTypes.string,
+  dateFormat: PropTypes.string,
 };
 
 export default Day;
