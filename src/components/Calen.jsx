@@ -138,7 +138,10 @@ class Calen extends PureComponent {
 
     this.setActiveDay(today.format(DEFAULT_DATE_FORMAT));
     this.setState({ period });
-    this.handlePeriodChange(period);
+    const { onPeriodChange } = this.props;
+    if (onPeriodChange) {
+      onPeriodChange(period);
+    }
   }
 
   handlePeriodChange(period) {
