@@ -39,6 +39,19 @@ class Calen extends PureComponent {
     this.setUpDaysQuantity();
   }
 
+  componentDidUpdate(prevProps) {
+    const isStartDateChanged = prevProps.startDate !== this.props.startDate;
+    const isEndDateChanged = prevProps.endDate !== this.props.endDate;
+    const hasValidDateRange = this.props.startDate && this.props.endDate;
+
+    if ((isStartDateChanged || isEndDateChanged) && hasValidDateRange) {
+      this.handlePeriodChange({
+        from: moment(this.props.startDate),
+        to: moment(this.props.endDate),
+      });
+    }
+  }
+
   componentWillUnmount() {
     this.removeBreakPointsEvents();
   }
@@ -198,6 +211,8 @@ class Calen extends PureComponent {
 
 Calen.defaultProps = {
   date: moment(),
+  startDate: null,
+  endDate: null,
   locale: null,
   data: {},
   daysQuantity: 0,
@@ -220,6 +235,16 @@ Calen.defaultProps = {
 Calen.propTypes = {
   locale: PropTypes.string,
   date: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.instanceOf(Date),
+    PropTypes.instanceOf(moment),
+  ]),
+  startDate: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.instanceOf(Date),
+    PropTypes.instanceOf(moment),
+  ]),
+  endDate: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.instanceOf(Date),
     PropTypes.instanceOf(moment),
