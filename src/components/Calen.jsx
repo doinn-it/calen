@@ -44,6 +44,10 @@ class Calen extends PureComponent {
     const isEndDateChanged = prevProps.endDate !== this.props.endDate;
     const hasValidDateRange = this.props.startDate && this.props.endDate;
 
+    if (this.props.date && this.props.date !== prevProps.date) {
+      this.setActiveDay(moment(this.props.date).format(DEFAULT_DATE_FORMAT));
+    }
+
     if ((isStartDateChanged || isEndDateChanged) && hasValidDateRange) {
       this.handlePeriodChange({
         from: moment(this.props.startDate),
@@ -200,9 +204,7 @@ class Calen extends PureComponent {
           scrollToActiveDay={this.props.scrollToActiveDay}
           dayProps={this.props.dayProps}
           onDayClick={this.handleDayClick}
-          onDayAddEventClick={
-            this.props.onDayAddEventClick ? this.handleDayAddEventClick : null
-          }
+          onDayAddEventClick={this.props.onDayAddEventClick ? this.handleDayAddEventClick : null}
         />
       </div>
     );
