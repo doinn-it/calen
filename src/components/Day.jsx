@@ -68,6 +68,7 @@ const DayStyled = styled.div`
 const Day = ({
   date,
   events,
+  dayHeaderSuffix,
   active,
   variant,
   isPast,
@@ -109,6 +110,7 @@ const Day = ({
       <div className="day-header">
         <div className="day-date">{moment(date).format(dateFormat)}</div>
         <div className="day-week-name">{formatWeekDay}</div>
+        {dayHeaderSuffix && <div className='day-header-suffix'>{dayHeaderSuffix}</div>}
       </div>
       <div className="day-event">
         {events.map(event => (
@@ -126,6 +128,7 @@ const Day = ({
         <div className="day-week-name">{formatWeekDay}</div>
         <div className="day-date">{moment(date).format('DD')}</div>
         <div className="day-event">{getEvents()}</div>
+        {dayHeaderSuffix && <div className='day-date-suffix'>{dayHeaderSuffix}</div>}
       </div>
     </React.Fragment>
   );
@@ -155,11 +158,13 @@ Day.defaultProps = {
   weekdayFormat: 'dddd',
   dateFormat: 'MMM DD',
   showTodayLabel: true,
+  dayHeaderSuffix: null,
 };
 
 Day.propTypes = {
   date: PropTypes.string.isRequired,
   events: PropTypes.array.isRequired,
+  dayHeaderSuffix: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.node]),
   active: PropTypes.bool,
   variant: PropTypes.oneOf(['default', 'day']),
   isPast: PropTypes.bool,
