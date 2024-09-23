@@ -115,6 +115,10 @@ class Calendar extends PureComponent {
       };
       if (data[date]) {
         obj.events = data[date].events;
+
+        if ('dayHeaderSuffix' in data[date]) {
+          obj.dayHeaderSuffix = data[date].dayHeaderSuffix;
+        }
       }
       return obj;
     });

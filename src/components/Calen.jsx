@@ -39,6 +39,23 @@ class Calen extends PureComponent {
     this.setUpDaysQuantity();
   }
 
+  componentDidUpdate(prevProps) {
+    const isStartDateChanged = prevProps.startDate !== this.props.startDate;
+    const isEndDateChanged = prevProps.endDate !== this.props.endDate;
+    const hasValidDateRange = this.props.startDate && this.props.endDate;
+
+    if (this.props.date && this.props.date !== prevProps.date) {
+      this.setActiveDay(moment(this.props.date).format(DEFAULT_DATE_FORMAT));
+    }
+
+    if ((isStartDateChanged || isEndDateChanged) && hasValidDateRange) {
+      this.handlePeriodChange({
+        from: moment(this.props.startDate),
+        to: moment(this.props.endDate),
+      });
+    }
+  }
+
   componentWillUnmount() {
     this.removeBreakPointsEvents();
   }
@@ -187,9 +204,7 @@ class Calen extends PureComponent {
           scrollToActiveDay={this.props.scrollToActiveDay}
           dayProps={this.props.dayProps}
           onDayClick={this.handleDayClick}
-          onDayAddEventClick={
-            this.props.onDayAddEventClick ? this.handleDayAddEventClick : null
-          }
+          onDayAddEventClick={this.props.onDayAddEventClick ? this.handleDayAddEventClick : null}
         />
       </div>
     );
@@ -198,6 +213,8 @@ class Calen extends PureComponent {
 
 Calen.defaultProps = {
   date: moment(),
+  startDate: null,
+  endDate: null,
   locale: null,
   data: {},
   daysQuantity: 0,
@@ -220,6 +237,16 @@ Calen.defaultProps = {
 Calen.propTypes = {
   locale: PropTypes.string,
   date: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.instanceOf(Date),
+    PropTypes.instanceOf(moment),
+  ]),
+  startDate: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.instanceOf(Date),
+    PropTypes.instanceOf(moment),
+  ]),
+  endDate: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.instanceOf(Date),
     PropTypes.instanceOf(moment),
